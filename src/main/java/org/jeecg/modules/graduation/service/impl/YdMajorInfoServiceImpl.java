@@ -21,9 +21,9 @@ public class YdMajorInfoServiceImpl extends ServiceImpl<YdMajorInfoMapper, YdMaj
 	@Autowired
 	private YdMajorInfoMapper ydMajorInfoMapper;
 	@Override
-	public IPage<YdMajorInfo> findMajorClassPageList(Page<YdMajorInfo> page, YdMajorInfo ydMajorInfo) {
+	public IPage<YdMajorInfo> findMajorPageList(Page<YdMajorInfo> page, YdMajorInfo ydMajorInfo) {
 		// TODO Auto-generated method stub
-		return ydMajorInfoMapper.findMajorClassPageList(page, ydMajorInfo);
+		return ydMajorInfoMapper.findMajorPageList(page, ydMajorInfo);
 	}
 
 }

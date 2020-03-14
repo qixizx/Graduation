@@ -68,7 +68,7 @@ public class YdMajorInfoController {
 		QueryWrapper<YdMajorInfo> queryWrapper = QueryGenerator.initQueryWrapper(ydMajorInfo, req.getParameterMap());
 		Page<YdMajorInfo> page = new Page<YdMajorInfo>(pageNo, pageSize);
 //		IPage<YdMajorInfo> pageList = ydMajorInfoService.page(page, queryWrapper);
-		IPage<YdMajorInfo> pageList = ydMajorInfoService.findMajorClassPageList(page,ydMajorInfo);
+		IPage<YdMajorInfo> pageList = ydMajorInfoService.findMajorPageList(page,ydMajorInfo);
 		result.setSuccess(true);
 		result.setResult(pageList);
 		return result;

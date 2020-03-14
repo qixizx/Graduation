@@ -66,21 +66,17 @@ public class YdTeacherInfo {
     @ApiModelProperty(value = "老师0    教务人员1")
 	private java.lang.String type;
 	/**添加人*/
-	@Excel(name = "添加人", width = 15)
     @ApiModelProperty(value = "添加人")
 	private java.lang.String createBy;
 	/**添加时间*/
-	@Excel(name = "添加时间", width = 20, format = "yyyy-MM-dd HH:mm:ss")
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty(value = "添加时间")
 	private java.util.Date createTime;
 	/**修改人*/
-	@Excel(name = "修改人", width = 15)
     @ApiModelProperty(value = "修改人")
 	private java.lang.String updateBy;
 	/**修改时间*/
-	@Excel(name = "修改时间", width = 20, format = "yyyy-MM-dd HH:mm:ss")
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty(value = "修改时间")

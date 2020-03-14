@@ -14,5 +14,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IYdMajorInfoService extends IService<YdMajorInfo> {
 	//查询专业相关信息
-	public IPage<YdMajorInfo> findMajorClassPageList(Page<YdMajorInfo> page,YdMajorInfo ydMajorInfo);
+	public IPage<YdMajorInfo> findMajorPageList(Page<YdMajorInfo> page,YdMajorInfo ydMajorInfoVo);
 }

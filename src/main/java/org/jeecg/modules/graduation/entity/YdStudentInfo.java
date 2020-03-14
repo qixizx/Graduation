@@ -14,6 +14,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.jeecg.common.aspect.annotation.Dict;
 import org.jeecgframework.poi.excel.annotation.Excel;
 
 /**
@@ -34,56 +35,65 @@ public class YdStudentInfo {
     @ApiModelProperty(value = "id")
 	private java.lang.String id;
 	/**学号*/
-	@Excel(name = "学号", width = 15)
-    @ApiModelProperty(value = "学号")
-	private java.lang.String stuNumber;
+	@Excel(name = "登录账号", width = 15)
+    @ApiModelProperty(value = "登录账号")
+	private java.lang.String username;
 	/**真实姓名*/
 	@Excel(name = "真实姓名", width = 15)
     @ApiModelProperty(value = "真实姓名")
-	private java.lang.String name;
-	/**性别*/
-	@Excel(name = "性别", width = 15)
+	private java.lang.String realname;
+
+    /**
+     * 性别（1：男 2：女）
+     */
     @ApiModelProperty(value = "性别")
+	@Excel(name = "性别", width = 15,dicCode="sex")
+    @Dict(dicCode = "sex")
 	private java.lang.String sex;
 	/**邮箱*/
 	@Excel(name = "邮箱", width = 15)
     @ApiModelProperty(value = "邮箱")
-	private java.lang.String mail;
+	private java.lang.String email;
 	/**手机号*/
 	@Excel(name = "手机号", width = 15)
     @ApiModelProperty(value = "手机号")
 	private java.lang.String phone;
 	/**所属班级 id*/
-	@Excel(name = "所属班级 id", width = 15)
-    @ApiModelProperty(value = "所属班级 id")
-	private java.lang.String calssId;
+//	  此处dictTable为数据库表名，dicCode为关联字段名，dicText为excel中显示的内容对应的字段
+	@Excel(name = "所属班级", width = 15,dictTable="yd_class_info",dicCode="id",dicText="class_name")
+    @ApiModelProperty(value = "所属班级")
+	private java.lang.String classId;
+
 	/**用户id*/
-	@Excel(name = "用户id", width = 15)
-    @ApiModelProperty(value = "用户id")
+//	@Excel(name = "用户", width = 15)
+    @ApiModelProperty(value = "用户")
 	private java.lang.String userId;
 	/**添加人*/
-	@Excel(name = "添加人", width = 15)
     @ApiModelProperty(value = "添加人")
 	private java.lang.String createBy;
 	/**添加时间*/
-	@Excel(name = "添加时间", width = 20, format = "yyyy-MM-dd HH:mm:ss")
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty(value = "添加时间")
 	private java.util.Date createTime;
 	/**修改人*/
-	@Excel(name = "修改人", width = 15)
     @ApiModelProperty(value = "修改人")
 	private java.lang.String updateBy;
 	/**修改时间*/
-	@Excel(name = "修改时间", width = 20, format = "yyyy-MM-dd HH:mm:ss")
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty(value = "修改时间")
 	private java.util.Date updateTime;
 	/**删除状态（0，正常，1已删除）*/
-	@Excel(name = "删除状态（0，正常，1已删除）", width = 15)
+//	@Excel(name = "删除状态（0，正常，1已删除）", width = 15)
     @ApiModelProperty(value = "删除状态（0，正常，1已删除）")
 	@TableLogic(value="0",delval = "1")
 	private java.lang.String delFlag;
+	
+	/**角色名称*/
+//	  此处dictTable为数据库表名，dicCode为关联字段名，dicText为excel中显示的内容对应的字段
+	@Excel(name = "角色", width = 15,dictTable="sys_role",dicCode="id",dicText="role_name")
+	@ApiModelProperty(value = "角色")
+	@TableField(exist=false)
+	private java.lang.String role;
 }

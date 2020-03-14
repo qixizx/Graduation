@@ -1,39 +1,50 @@
 package org.jeecg.modules.graduation.controller;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
-import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.aspect.annotation.AutoLog;
+import org.jeecg.common.system.query.QueryGenerator;
+import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.graduation.entity.YdClassInfo;
 import org.jeecg.modules.graduation.service.IYdClassInfoService;
-import java.util.Date;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import lombok.extern.slf4j.Slf4j;
-
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
 import org.jeecgframework.poi.excel.entity.ImportParams;
 import org.jeecgframework.poi.excel.view.JeecgEntityExcelView;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
+
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 
  /**
  * @Description: 班级信息表
@@ -67,7 +78,8 @@ public class YdClassInfoController {
 		Result<IPage<YdClassInfo>> result = new Result<IPage<YdClassInfo>>();
 		QueryWrapper<YdClassInfo> queryWrapper = QueryGenerator.initQueryWrapper(ydClassInfo, req.getParameterMap());
 		Page<YdClassInfo> page = new Page<YdClassInfo>(pageNo, pageSize);
-		IPage<YdClassInfo> pageList = ydClassInfoService.page(page, queryWrapper);
+//		IPage<YdClassInfo> pageList = ydClassInfoService.page(page, queryWrapper);
+		IPage<YdClassInfo> pageList = ydClassInfoService.findClassPageList(page,ydClassInfo);
 		result.setSuccess(true);
 		result.setResult(pageList);
 		return result;
@@ -194,15 +206,23 @@ public class YdClassInfoController {
       } catch (UnsupportedEncodingException e) {
           e.printStackTrace();
       }
-
-      //Step.2 AutoPoi 导出Excel
-      ModelAndView mv = new ModelAndView(new JeecgEntityExcelView());
-      List<YdClassInfo> pageList = ydClassInfoService.list(queryWrapper);
-      //导出文件名称
-      mv.addObject(NormalExcelConstants.FILE_NAME, "班级信息表列表");
-      mv.addObject(NormalExcelConstants.CLASS, YdClassInfo.class);
-      mv.addObject(NormalExcelConstants.PARAMS, new ExportParams("班级信息表列表数据", "导出人:Jeecg", "导出信息"));
-      mv.addObject(NormalExcelConstants.DATA_LIST, pageList);
+		LoginUser user = (LoginUser)SecurityUtils.getSubject().getPrincipal(); // 登录账号 
+	      //Step.2 AutoPoi 导出Excel
+	      ModelAndView mv = new ModelAndView(new JeecgEntityExcelView());
+	      List<YdClassInfo> pageList = ydClassInfoService.list(queryWrapper);
+		if (user != null) {
+		      //导出文件名称
+		      mv.addObject(NormalExcelConstants.FILE_NAME, "班级信息表列表");
+		      mv.addObject(NormalExcelConstants.CLASS, YdClassInfo.class);
+		      mv.addObject(NormalExcelConstants.PARAMS, new ExportParams("班级信息表列表数据", "导出人:"+user.getUsername(), "导出信息"));
+		      mv.addObject(NormalExcelConstants.DATA_LIST, pageList);
+		}else {
+		      //导出文件名称
+		      mv.addObject(NormalExcelConstants.FILE_NAME, "班级信息表列表");
+		      mv.addObject(NormalExcelConstants.CLASS, YdClassInfo.class);
+		      mv.addObject(NormalExcelConstants.PARAMS, new ExportParams("班级信息表列表数据", "导出人:jeecg", "导出信息"));
+		      mv.addObject(NormalExcelConstants.DATA_LIST, pageList);
+		}
       return mv;
   }
 

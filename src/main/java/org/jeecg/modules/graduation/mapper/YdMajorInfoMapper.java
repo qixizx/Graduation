@@ -1,9 +1,8 @@
 package org.jeecg.modules.graduation.mapper;
 
-import java.util.List;
-
 import org.apache.ibatis.annotations.Param;
 import org.jeecg.modules.graduation.entity.YdMajorInfo;
+
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -16,5 +15,5 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
  */
 public interface YdMajorInfoMapper extends BaseMapper<YdMajorInfo> {
 	//查询专业相关信息
-	public IPage<YdMajorInfo> findMajorClassPageList(Page<YdMajorInfo> page,@Param("map")YdMajorInfo ydMajorInfo);
+	public IPage<YdMajorInfo> findMajorPageList(Page<YdMajorInfo> page,@Param("map")YdMajorInfo ydMajorInfo);
 }

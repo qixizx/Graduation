@@ -1,20 +1,20 @@
 package org.jeecg.modules.graduation.entity;
 
-import java.io.Serializable;
-import java.util.Date;
+import org.jeecgframework.poi.excel.annotation.Excel;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.jeecgframework.poi.excel.annotation.Excel;
 
 /**
  * @Description: 班级信息表
@@ -42,25 +42,22 @@ public class YdClassInfo {
     @ApiModelProperty(value = "班总人数")
 	private java.lang.Integer classNum;
 	/**所属专业*/
-	@Excel(name = "所属专业", width = 15)
+//	  此处dictTable为数据库表名，dicCode为关联字段名，dicText为excel中显示的内容对应的字段
+	@Excel(name = "所属专业", width = 15,dictTable="yd_major_info",dicCode="id",dicText="major")
     @ApiModelProperty(value = "所属专业")
 	private java.lang.String majorId;
 	/**添加人*/
-	@Excel(name = "添加人", width = 15)
     @ApiModelProperty(value = "添加人")
 	private java.lang.String createBy;
 	/**添加时间*/
-	@Excel(name = "添加时间", width = 20, format = "yyyy-MM-dd HH:mm:ss")
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty(value = "添加时间")
 	private java.util.Date createTime;
 	/**修改人*/
-	@Excel(name = "修改人", width = 15)
     @ApiModelProperty(value = "修改人")
 	private java.lang.String updateBy;
 	/**修改时间*/
-	@Excel(name = "修改时间", width = 20, format = "yyyy-MM-dd HH:mm:ss")
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty(value = "修改时间")
@@ -70,4 +67,11 @@ public class YdClassInfo {
     @ApiModelProperty(value = "删除状态（0，正常，1已删除）")
 	@TableLogic(value="0",delval = "1")
 	private java.lang.String delFlag;
+	
+	
+	
+	/**专业名称*/
+	@TableField(exist=false)
+	private java.lang.String major;
+
 }

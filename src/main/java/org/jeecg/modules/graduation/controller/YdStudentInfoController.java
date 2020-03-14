@@ -3,6 +3,7 @@ package org.jeecg.modules.graduation.controller;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -11,9 +12,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.aspect.annotation.AutoLog;
+import org.jeecg.common.util.PasswordUtil;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.graduation.entity.YdStudentInfo;
 import org.jeecg.modules.graduation.service.IYdStudentInfoService;
+import org.jeecg.modules.system.entity.SysUser;
+import org.jeecg.modules.system.service.ISysUserService;
+
 import java.util.Date;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -48,7 +53,8 @@ import io.swagger.annotations.ApiOperation;
 public class YdStudentInfoController {
 	@Autowired
 	private IYdStudentInfoService ydStudentInfoService;
-	
+	@Autowired
+	private ISysUserService sysUserService;
 	/**
 	  * 分页列表查询
 	 * @param ydStudentInfo
@@ -200,8 +206,11 @@ public class YdStudentInfoController {
       List<YdStudentInfo> pageList = ydStudentInfoService.list(queryWrapper);
       //导出文件名称
       mv.addObject(NormalExcelConstants.FILE_NAME, "学生信息表列表");
+      //注解对象Class
       mv.addObject(NormalExcelConstants.CLASS, YdStudentInfo.class);
+      //自定义表格参数
       mv.addObject(NormalExcelConstants.PARAMS, new ExportParams("学生信息表列表数据", "导出人:Jeecg", "导出信息"));
+      //导出数据列表
       mv.addObject(NormalExcelConstants.DATA_LIST, pageList);
       return mv;
   }
@@ -215,6 +224,7 @@ public class YdStudentInfoController {
    */
   @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
   public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
+//	  http://easypoi.mydoc.io/#text_217704  文档
       MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
       Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
       for (Map.Entry<String, MultipartFile> entity : fileMap.entrySet()) {
@@ -222,21 +232,58 @@ public class YdStudentInfoController {
           ImportParams params = new ImportParams();
           params.setTitleRows(2);
           params.setHeadRows(1);
+//          是否需要保存上传的Excel
           params.setNeedSave(true);
-          try {
-              List<YdStudentInfo> listYdStudentInfos = ExcelImportUtil.importExcel(file.getInputStream(), YdStudentInfo.class, params);
-              ydStudentInfoService.saveBatch(listYdStudentInfos);
-              return Result.ok("文件导入成功！数据行数:" + listYdStudentInfos.size());
-          } catch (Exception e) {
-              log.error(e.getMessage(),e);
-              return Result.error("文件导入失败:"+e.getMessage());
-          } finally {
-              try {
-                  file.getInputStream().close();
-              } catch (IOException e) {
-                  e.printStackTrace();
-              }
-          }
+			try {
+				//重叠部分class需要处理
+				List<SysUser> listSysUsers = ExcelImportUtil.importExcel(file.getInputStream(), SysUser.class, params);
+				for (SysUser sysUserExcel : listSysUsers) {
+					if (sysUserExcel.getPassword() == null) {
+						// 密码默认为“123456”
+						sysUserExcel.setCreateTime(new Date());// 设置创建时间
+						String salt = oConvertUtils.randomGen(8);
+						sysUserExcel.setSalt(salt);
+						String passwordEncode = PasswordUtil.encrypt(sysUserExcel.getUsername(), "123456", salt);
+						sysUserExcel.setPassword(passwordEncode);
+						//直接默认状态 正常
+						sysUserExcel.setStatus(1);
+						//直接默认 0  正常
+						sysUserExcel.setDelFlag("0");
+					}				
+					
+			          try {
+			              List<YdStudentInfo> listYdStudentInfos = ExcelImportUtil.importExcel(file.getInputStream(), YdStudentInfo.class, params);
+			              //  需要测试  是否上下两个  按相同的顺序排序  防止excle 读取顺序不同
+			              Optional<YdStudentInfo> ydStudentInfo=listYdStudentInfos.stream().filter(p -> sysUserExcel.getUsername().equals(p.getUsername())).findFirst();
+			              System.out.println(ydStudentInfo.get()+"---------");
+			              //现存到用户表 在存储到学生表 同时设置角色
+			              sysUserService.addUserWithRole(sysUserExcel, ydStudentInfo.get().getRole());
+			              //根据用户名查询用户信息 
+			              SysUser sysUser =sysUserService.getUserByName(sysUserExcel.getUsername());
+			              ydStudentInfo.get().setUserId(sysUser.getId());
+			              ydStudentInfoService.save(ydStudentInfo.get());
+			          } catch (Exception e) {
+			              log.error(e.getMessage(),e);
+			              return Result.error("文件导入失败:"+e.getMessage());
+			          } finally {
+			              try {
+			                  file.getInputStream().close();
+			              } catch (IOException e) {
+			                  e.printStackTrace();
+			              }
+			          }
+				}
+				return Result.ok("文件导入成功！数据行数：" + listSysUsers.size());
+			} catch (Exception e) {
+				log.error(e.getMessage(), e);
+				return Result.error("抱歉! 您导入的数据中用户名已经存在.");
+			} finally {
+				try {
+					file.getInputStream().close();
+				} catch (IOException e) {
+					log.error(e.getMessage(), e);
+				}
+			}
       }
       return Result.ok("文件导入失败！");
   }
