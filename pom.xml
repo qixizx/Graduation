@@ -1,0 +1,126 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <groupId>com.topwellsoft.springboot-series</groupId>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>aquarius</artifactId>
+    <version>1.0.0</version>
+
+    <parent>
+        <groupId>com.topwellsoft.springboot-series</groupId>
+        <artifactId>tpsoft-springboot-series-env</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <repositories>
+        <repository>
+            <id>aliyun</id>
+            <name>aliyun Repository</name>
+            <url>http://maven.aliyun.com/nexus/content/groups/public</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>jeecg</id>
+            <name>jeecg Repository</name>
+            <url>http://maven.jeecg.org/nexus/content/repositories/jeecg</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    <dependencies>
+        <dependency>
+            <groupId>com.braintreepayments.gateway</groupId>
+            <artifactId>braintree-java</artifactId>
+            <version>2.106.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk16 -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk16</artifactId>
+            <version>1.40</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.4</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.9.7</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.9.7</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.9.7</version>
+        </dependency>
+       <!--  https://mvnrepository.com/artifact/com.google.guava/guava
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>18.0</version>
+        </dependency>-->
+        <!-- https://mvnrepository.com/artifact/com.madgag.spongycastle/prov -->
+        <dependency>
+            <groupId>com.madgag.spongycastle</groupId>
+            <artifactId>prov</artifactId>
+            <version>1.58.0.0</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.madgag.spongycastle/core -->
+        <dependency>
+            <groupId>com.madgag.spongycastle</groupId>
+            <artifactId>core</artifactId>
+            <version>1.58.0.0</version>
+        </dependency>
+
+
+
+
+        <dependency>
+            <groupId>com.topwellsoft.springboot-series</groupId>
+            <artifactId>tpsoft-boot-base-common</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.topwellsoft.springboot-series</groupId>
+            <artifactId>tpsoft-boot-module-system</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>3.7.0</version>
+        </dependency>
+
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

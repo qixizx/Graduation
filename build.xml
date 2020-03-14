@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+	Ant build.xml ====================================================================== -->
+<project name="deploy" default="default">
+	<property name="gitrepo.home" value="d:/scrm-report-api" />
+	<property name="benz_park.dir" value="${basedir}/../benz_park" />
+	<property name="tb-parent.dir" value="${basedir}/../tpsoft-boot" />
+	<property name="tb-base-common.dir" value="${basedir}/../tpsoft-boot-base-common" />
+	<property name="tb-module-system.dir" value="${basedir}/../tpsoft-boot-module-system" />
+	<property name="deploy.benz_park.dir" value="${gitrepo.home}/benz_park" />
+	<property name="deploy.tb-parent.dir" value="${gitrepo.home}" />
+	<property name="deploy.tb-base-common.dir" value="${gitrepo.home}/tpsoft-boot-base-common" />
+	<property name="deploy.tb-module-system.dir" value="${gitrepo.home}/tpsoft-boot-module-system" />
+
+	<target name="init_deploy">
+		<mkdir dir="${gitrepo.home}/benz_park" />
+		<mkdir dir="${gitrepo.home}/tpsoft-boot-base-common" />
+		<mkdir dir="${gitrepo.home}/tpsoft-boot-module-system" />
+	</target>
+
+	<!-- ================================= target: deploy ================================= -->
+	<target name="default" depends="init_deploy">
+		<echo>
+			build tpsoft-root
+		</echo>
+
+		<copy todir="${gitrepo.home}">
+			<fileset dir="${tb-parent.dir}">
+				<include name="Dockerfile"></include>
+			</fileset>
+		</copy>
+		<copy file="${tb-parent.dir}/pom-benz.txt" tofile="${gitrepo.home}/pom.xml" />
+
+		<echo>
+			build tb-base-common
+		</echo>
+		<copy todir="${deploy.tb-base-common.dir}">
+			<fileset dir="${tb-base-common.dir}/">
+				<include name="src/**"></include>
+				<include name="pom.xml" />
+			</fileset>
+		</copy>
+
+		<echo>
+			build tb-module-system
+		</echo>
+		<copy todir="${deploy.tb-module-system.dir}">
+			<fileset dir="${tb-module-system.dir}/">
+				<include name="src/**"></include>
+				<include name="pom.xml" />
+				<exclude name="src/main/java/org/jeecg/JeecgOneGUI.java" />
+				<exclude name="src/main/java/org/jeecg/JeecgOneToMainUtil.java" />
+			</fileset>
+		</copy>
+
+		<echo>
+			build tb-benz_park
+		</echo>
+		<copy todir="${deploy.benz_park.dir}">
+			<fileset dir="${benz_park.dir}/">
+				<include name="src/**"></include>
+				<include name="pom.xml" />
+			</fileset>
+		</copy>
+
+	</target>
+</project>

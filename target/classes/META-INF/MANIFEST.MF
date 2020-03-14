@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Built-By: 71667
+Build-Jdk: 13.0.2
+Implementation-Title: aquarius
+Implementation-Version: 1.0.0
+Implementation-Vendor-Id: com.topwellsoft.springboot-series
+Implementation-URL: https://projects.spring.io/spring-boot/#/spring-boot
+ -starter-parent/tpsoft-springboot-series-env/aquarius
+Created-By: Maven Integration for Eclipse
+
