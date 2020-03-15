@@ -8,8 +8,11 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
+import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.common.aspect.annotation.AutoLog;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.graduation.entity.YdMajorInfo;
@@ -65,7 +68,7 @@ public class YdMajorInfoController {
 									  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 									  HttpServletRequest req) {
 		Result<IPage<YdMajorInfo>> result = new Result<IPage<YdMajorInfo>>();
-		QueryWrapper<YdMajorInfo> queryWrapper = QueryGenerator.initQueryWrapper(ydMajorInfo, req.getParameterMap());
+//		QueryWrapper<YdMajorInfo> queryWrapper = QueryGenerator.initQueryWrapper(ydMajorInfo, req.getParameterMap());
 		Page<YdMajorInfo> page = new Page<YdMajorInfo>(pageNo, pageSize);
 //		IPage<YdMajorInfo> pageList = ydMajorInfoService.page(page, queryWrapper);
 		IPage<YdMajorInfo> pageList = ydMajorInfoService.findMajorPageList(page,ydMajorInfo);
@@ -199,10 +202,17 @@ public class YdMajorInfoController {
       //Step.2 AutoPoi 导出Excel
       ModelAndView mv = new ModelAndView(new JeecgEntityExcelView());
       List<YdMajorInfo> pageList = ydMajorInfoService.list(queryWrapper);
+      LoginUser user = (LoginUser)SecurityUtils.getSubject().getPrincipal(); // 登录账号 
+      String tittle=null;
+		if (user != null) {
+			tittle="导出人:"+user.getUsername();
+		}else {
+			tittle="导出人:jeecg";
+		}
       //导出文件名称
       mv.addObject(NormalExcelConstants.FILE_NAME, "专业信息表列表");
       mv.addObject(NormalExcelConstants.CLASS, YdMajorInfo.class);
-      mv.addObject(NormalExcelConstants.PARAMS, new ExportParams("专业信息表列表数据", "导出人:Jeecg", "导出信息"));
+      mv.addObject(NormalExcelConstants.PARAMS, new ExportParams("专业信息表列表数据", tittle, "导出信息"));
       mv.addObject(NormalExcelConstants.DATA_LIST, pageList);
       return mv;
   }

@@ -76,7 +76,7 @@ public class YdClassInfoController {
 									  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 									  HttpServletRequest req) {
 		Result<IPage<YdClassInfo>> result = new Result<IPage<YdClassInfo>>();
-		QueryWrapper<YdClassInfo> queryWrapper = QueryGenerator.initQueryWrapper(ydClassInfo, req.getParameterMap());
+//		QueryWrapper<YdClassInfo> queryWrapper = QueryGenerator.initQueryWrapper(ydClassInfo, req.getParameterMap());
 		Page<YdClassInfo> page = new Page<YdClassInfo>(pageNo, pageSize);
 //		IPage<YdClassInfo> pageList = ydClassInfoService.page(page, queryWrapper);
 		IPage<YdClassInfo> pageList = ydClassInfoService.findClassPageList(page,ydClassInfo);
@@ -206,23 +206,22 @@ public class YdClassInfoController {
       } catch (UnsupportedEncodingException e) {
           e.printStackTrace();
       }
-		LoginUser user = (LoginUser)SecurityUtils.getSubject().getPrincipal(); // 登录账号 
+		
 	      //Step.2 AutoPoi 导出Excel
 	      ModelAndView mv = new ModelAndView(new JeecgEntityExcelView());
 	      List<YdClassInfo> pageList = ydClassInfoService.list(queryWrapper);
-		if (user != null) {
-		      //导出文件名称
-		      mv.addObject(NormalExcelConstants.FILE_NAME, "班级信息表列表");
-		      mv.addObject(NormalExcelConstants.CLASS, YdClassInfo.class);
-		      mv.addObject(NormalExcelConstants.PARAMS, new ExportParams("班级信息表列表数据", "导出人:"+user.getUsername(), "导出信息"));
-		      mv.addObject(NormalExcelConstants.DATA_LIST, pageList);
-		}else {
-		      //导出文件名称
-		      mv.addObject(NormalExcelConstants.FILE_NAME, "班级信息表列表");
-		      mv.addObject(NormalExcelConstants.CLASS, YdClassInfo.class);
-		      mv.addObject(NormalExcelConstants.PARAMS, new ExportParams("班级信息表列表数据", "导出人:jeecg", "导出信息"));
-		      mv.addObject(NormalExcelConstants.DATA_LIST, pageList);
-		}
+	      LoginUser user = (LoginUser)SecurityUtils.getSubject().getPrincipal(); // 登录账号 
+	      String tittle=null;
+			if (user != null) {
+				tittle="导出人:"+user.getUsername();
+			}else {
+				tittle="导出人:jeecg";
+			}
+	      //导出文件名称
+	      mv.addObject(NormalExcelConstants.FILE_NAME, "班级信息表列表");
+	      mv.addObject(NormalExcelConstants.CLASS, YdClassInfo.class);
+	      mv.addObject(NormalExcelConstants.PARAMS, new ExportParams("班级信息表列表数据", tittle, "导出信息"));
+	      mv.addObject(NormalExcelConstants.DATA_LIST, pageList);
       return mv;
   }
 
