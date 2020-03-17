@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.system.vo.LoginUser;
@@ -81,6 +82,7 @@ public class YdFacultyInfoController {
 	 * @param ydFacultyInfo
 	 * @return
 	 */
+	@RequiresPermissions("faculty:add")
 	@AutoLog(value = "院系表-添加")
 	@ApiOperation(value="院系表-添加", notes="院系表-添加")
 	@PostMapping(value = "/add")
@@ -223,6 +225,7 @@ public class YdFacultyInfoController {
    * @param response
    * @return
    */
+  @RequiresPermissions("faculty:import")
   @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
   public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
       MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;

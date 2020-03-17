@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.jeecg.modules.graduation.entity.YdTeacherInfo;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -21,4 +20,7 @@ public interface IYdTeacherInfoService extends IService<YdTeacherInfo> {
 	
 	//导出显示界面
 	public List<YdTeacherInfo> listImport(YdTeacherInfo ydTeacherInfo);
+	
+	//根据 用户名查用户信息
+	public YdTeacherInfo  findTeacherInfo(String username);
 }

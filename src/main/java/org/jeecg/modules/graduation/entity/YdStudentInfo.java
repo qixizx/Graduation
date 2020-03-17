@@ -89,7 +89,12 @@ public class YdStudentInfo {
 	@ApiModelProperty(value = "删除状态（0，正常，1已删除）")
 	@TableLogic(value = "0", delval = "1")
 	private java.lang.String delFlag;
-
+	/** 是否加入群组(0 是    1否) */
+	@ApiModelProperty(value = "是否加入群组(0 是    1否)")
+	private java.lang.String isGroup;
+	
+	
+	
 	/*
 	 * //单一角色时候不需要使用 直接后台固定角色id
 	 *//** 角色名称 *//*

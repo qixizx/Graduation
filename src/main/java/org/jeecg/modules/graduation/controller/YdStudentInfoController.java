@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.aspect.annotation.AutoLog;
 import org.jeecg.common.system.query.QueryGenerator;
@@ -99,6 +100,7 @@ public class YdStudentInfoController {
 	 * @param ydStudentInfo
 	 * @return
 	 */
+	@RequiresPermissions("student:add")
 	@AutoLog(value = "学生信息表-添加")
 	@ApiOperation(value="学生信息表-添加", notes="学生信息表-添加")
 	@PostMapping(value = "/add")
@@ -333,6 +335,7 @@ public class YdStudentInfoController {
    * @param response
    * @return
    */
+  @RequiresPermissions("student:import")
   @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
   public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
 //	  http://easypoi.mydoc.io/#text_217704  文档

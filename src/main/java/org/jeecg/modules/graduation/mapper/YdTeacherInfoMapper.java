@@ -21,4 +21,6 @@ public interface YdTeacherInfoMapper extends BaseMapper<YdTeacherInfo> {
 	public IPage<YdTeacherInfo> findTeacherPageList(Page<YdTeacherInfo> page,@Param("map")YdTeacherInfo ydTeacherInfo);
 
 	public List<YdTeacherInfo> listImport(@Param("map")YdTeacherInfo ydTeacherInfo) ;
+	
+	public YdTeacherInfo findTeacherInfo(String username);
 }

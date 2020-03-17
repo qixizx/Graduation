@@ -44,4 +44,9 @@
           	and a.type = #{map.type}
 	    </if>
 	</select>
+	<select id="findTeacherInfo" resultType="org.jeecg.modules.graduation.entity.YdTeacherInfo">
+		SELECT a.* 
+		from yd_teacher_info a
+		WHERE  a.username = #{username}
+	</select>
 </mapper>

@@ -15,5 +15,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
  */
 public interface YdMajorInfoMapper extends BaseMapper<YdMajorInfo> {
 	//查询专业相关信息
-	public IPage<YdMajorInfo> findMajorPageList(Page<YdMajorInfo> page,@Param("map")YdMajorInfo ydMajorInfo);
+	public IPage<YdMajorInfo> findMajorPageList(Page<YdMajorInfo> page,@Param("map")YdMajorInfo ydMajorInfo, @Param("queryName") String queryName);
+	
 }

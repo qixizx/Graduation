@@ -16,5 +16,5 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
  */
 public interface YdStudentInfoMapper extends BaseMapper<YdStudentInfo> {
 	//学生信息页面查询
-	public IPage<YdStudentInfo> finStudentPageList(Page<YdStudentInfo> page,@Param("map")YdStudentInfo ydStudentInfo);
+	public IPage<YdStudentInfo> finStudentPageList(Page<YdStudentInfo> page,@Param("map")YdStudentInfo ydStudentInfo, @Param("queryName") String queryName);
 }

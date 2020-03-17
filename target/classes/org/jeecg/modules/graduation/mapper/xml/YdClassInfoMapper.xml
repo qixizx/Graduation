@@ -6,6 +6,14 @@
 		FROM yd_class_info a
 		left JOIN yd_major_info b on a.major_id=b.id
 		WHERE a.del_flag='0'
+		and a.major_id in (
+			SELECT c.id
+			from yd_major_info c
+			LEFT JOIN yd_faculty_info d on  c.faculty_id=d.id
+			<if test="queryName != null and queryName!=''">
+				WHERE d.id =#{queryName}
+			</if>
+		)
 		<if test="map.majorId != null and map.majorId !=''">
             and a.major_id = #{map.majorId}
         </if>

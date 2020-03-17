@@ -12,5 +12,8 @@
 		<if test="map.major != null and map.major !=''">
             and a.major LIKE CONCAT('%','${map.major}','%')
         </if>
+		<if test="queryName != null and queryName!=''">
+			and a.faculty_id = #{queryName}
+		</if>
 	</select>
 </mapper>

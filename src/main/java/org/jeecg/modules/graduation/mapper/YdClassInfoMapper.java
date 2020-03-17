@@ -14,5 +14,5 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
  * @Version: V1.0
  */
 public interface YdClassInfoMapper extends BaseMapper<YdClassInfo> {
-	public IPage<YdClassInfo> findClassPageList(Page<YdClassInfo> page,@Param("map")YdClassInfo ydClassInfo);
+	public IPage<YdClassInfo> findClassPageList(Page<YdClassInfo> page,@Param("map")YdClassInfo ydClassInfo,@Param("queryName") String queryName);
 }

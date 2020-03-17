@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.aspect.annotation.AutoLog;
 import org.jeecg.common.system.query.QueryGenerator;
@@ -85,9 +86,17 @@ public class YdTeacherInfoController {
 									  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 									  HttpServletRequest req) {
 		Result<IPage<YdTeacherInfo>> result = new Result<IPage<YdTeacherInfo>>();
-		QueryWrapper<YdTeacherInfo> queryWrapper = QueryGenerator.initQueryWrapper(ydTeacherInfo, req.getParameterMap());
+//		QueryWrapper<YdTeacherInfo> queryWrapper = QueryGenerator.initQueryWrapper(ydTeacherInfo, req.getParameterMap());
 		Page<YdTeacherInfo> page = new Page<YdTeacherInfo>(pageNo, pageSize);
 //		IPage<YdTeacherInfo> pageList = ydTeacherInfoService.page(page, queryWrapper);
+		LoginUser sysUser = (LoginUser) SecurityUtils.getSubject()
+				.getPrincipal();
+		List<String> list = sysUserService.getRole(sysUser.getUsername());
+		  // 判断是否是老师或者教务人员 只查自己院系的信息 
+		if (list.contains("academic") ||list.contains("teacher")) { 
+			YdTeacherInfo ydTeacherInfo1 =ydTeacherInfoService.findTeacherInfo(sysUser.getUsername());
+			ydTeacherInfo.setFacultyId(ydTeacherInfo1.getFacultyId()); 
+		}	
 		IPage<YdTeacherInfo> pageList = ydTeacherInfoService.findTeacherPageList(page, ydTeacherInfo);
 		
 		result.setSuccess(true);
@@ -99,6 +108,7 @@ public class YdTeacherInfoController {
 	 * @param ydTeacherInfo
 	 * @return
 	 */
+	@RequiresPermissions("teacher:add")
 	@AutoLog(value = "老师信息表-添加")
 	@ApiOperation(value="老师信息表-添加", notes="老师信息表-添加")
 	@PostMapping(value = "/add")
@@ -306,6 +316,31 @@ public class YdTeacherInfoController {
 //	}
 	
 	/**
+	  * 通过登录账号查询
+	 * @return
+	 */
+	@AutoLog(value = "老师信息表-通过登录账号查询")
+	@ApiOperation(value="老师信息表-通过登录账号查询", notes="老师信息表-通过登录账号查询")
+	@GetMapping(value = "/queryByUsername")
+	public Result<YdTeacherInfo> queryByUsername() {
+		Result<YdTeacherInfo> result = new Result<YdTeacherInfo>();
+		LoginUser sysUser = (LoginUser) SecurityUtils.getSubject()
+				.getPrincipal();
+		List<String> list = sysUserService.getRole(sysUser.getUsername());
+		YdTeacherInfo ydTeacherInfo =null;
+		// 判断是否是老师或者教务人员   只查自己院系的信息
+		if (list.contains("academic") || list.contains("teacher")) {
+			 ydTeacherInfo = ydTeacherInfoService.findTeacherInfo(sysUser.getUsername());
+		}
+		if(ydTeacherInfo==null) {
+			result.error500("未找到对应实体");
+		}else {
+			result.setResult(ydTeacherInfo);
+			result.setSuccess(true);
+		}
+		return result;
+	}
+	/**
 	  * 通过id查询
 	 * @param id
 	 * @return
@@ -389,6 +424,7 @@ public class YdTeacherInfoController {
    * @param response
    * @return
    */
+  @RequiresPermissions("teacher:import")
   @RequestMapping(value = "/importExcel", method = RequestMethod.POST)
   public Result<?> importExcel(HttpServletRequest request, HttpServletResponse response) {
       MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;

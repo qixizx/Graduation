@@ -6,6 +6,18 @@
 		FROM yd_student_info a
 		left JOIN yd_class_info b on a.class_id=b.id
 		WHERE a.del_flag='0'
+		and a.class_id in (
+			SELECT c.id
+			FROM yd_class_info c
+			WHERE c.major_id in (
+				SELECT d.id
+				from yd_major_info d
+				LEFT JOIN yd_faculty_info e on  d.faculty_id=e.id
+				<if test="queryName != null and queryName!=''">
+					WHERE e.id =#{queryName}
+				</if>
+			)
+		)
 		<if test="map.username != null and map.username !=''">
             and a.username LIKE CONCAT('%','${map.username}','%')
 	    </if>
