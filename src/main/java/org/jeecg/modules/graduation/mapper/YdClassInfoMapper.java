@@ -1,7 +1,10 @@
 package org.jeecg.modules.graduation.mapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 import org.jeecg.modules.graduation.entity.YdClassInfo;
+import org.jeecg.modules.graduation.vo.ClassTreeVo;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -15,4 +18,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
  */
 public interface YdClassInfoMapper extends BaseMapper<YdClassInfo> {
 	public IPage<YdClassInfo> findClassPageList(Page<YdClassInfo> page,@Param("map")YdClassInfo ydClassInfo,@Param("queryName") String queryName);
+
+	public List<ClassTreeVo> findClassTree();
 }

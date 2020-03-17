@@ -9,6 +9,7 @@ import org.jeecg.modules.graduation.entity.YdTeacherInfo;
 import org.jeecg.modules.graduation.mapper.YdClassInfoMapper;
 import org.jeecg.modules.graduation.service.IYdClassInfoService;
 import org.jeecg.modules.graduation.service.IYdTeacherInfoService;
+import org.jeecg.modules.graduation.vo.ClassTreeVo;
 import org.jeecg.modules.system.service.ISysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,6 +47,12 @@ public class YdClassInfoServiceImpl extends ServiceImpl<YdClassInfoMapper, YdCla
 				//查询条件修改
 		}
 		return ydClassInfoMapper.findClassPageList(page, ydClassInfo,queryName);
+	}
+
+	@Override
+	public List<ClassTreeVo> findClassTree() {
+		// TODO Auto-generated method stub
+		return ydClassInfoMapper.findClassTree();
 	}
 
 }

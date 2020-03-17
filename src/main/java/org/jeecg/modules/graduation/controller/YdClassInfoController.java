@@ -3,6 +3,7 @@ package org.jeecg.modules.graduation.controller;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,10 @@ import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.graduation.entity.YdClassInfo;
 import org.jeecg.modules.graduation.service.IYdClassInfoService;
+import org.jeecg.modules.graduation.service.IYdFacultyInfoService;
+import org.jeecg.modules.graduation.service.IYdMajorInfoService;
+import org.jeecg.modules.graduation.vo.ClassTreeVo;
+import org.jeecg.modules.graduation.vo.TestTreeList;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
 import org.jeecgframework.poi.excel.def.NormalExcelConstants;
 import org.jeecgframework.poi.excel.entity.ExportParams;
@@ -60,7 +65,10 @@ import lombok.extern.slf4j.Slf4j;
 public class YdClassInfoController {
 	@Autowired
 	private IYdClassInfoService ydClassInfoService;
-	
+	@Autowired
+	private IYdFacultyInfoService ydFacultyInfoService;
+	@Autowired
+	private IYdMajorInfoService ydMajorInfoService;
 	/**
 	  * 分页列表查询
 	 * @param ydClassInfo
@@ -83,6 +91,25 @@ public class YdClassInfoController {
 		IPage<YdClassInfo> pageList = ydClassInfoService.findClassPageList(page,ydClassInfo);
 		result.setSuccess(true);
 		result.setResult(pageList);
+		return result;
+	}
+	
+	@AutoLog(value = "班级信息表-三级树")
+	@ApiOperation(value="班级信息表-三级树", notes="班级信息表-三级树")
+	@GetMapping(value = "/classTree")
+	public Result<List<ClassTreeVo>>  classTreeList() {
+		Result<List<ClassTreeVo>> result = new Result<List<ClassTreeVo>>();
+		List<ClassTreeVo> classList=ydClassInfoService.findClassTree();
+		List<ClassTreeVo> majorList=ydMajorInfoService.findMajortyTree();
+		List<ClassTreeVo> facultyList=ydFacultyInfoService.findFacultyTree();
+		List<ClassTreeVo> voList=new ArrayList<ClassTreeVo>();
+		voList.addAll(facultyList);
+		voList.addAll(majorList);
+		voList.addAll(classList);
+		TestTreeList testTreeList = new TestTreeList();
+		List<ClassTreeVo> classTree = testTreeList.buildChilTree(voList,"");
+		result.setSuccess(true);
+		result.setResult(classTree);
 		return result;
 	}
 	

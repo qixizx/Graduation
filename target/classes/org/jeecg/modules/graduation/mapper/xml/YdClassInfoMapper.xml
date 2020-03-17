@@ -21,5 +21,8 @@
             and a.class_name LIKE CONCAT('%','${map.className}','%')
         </if>
 	</select>
-	
+	<select id="findClassTree" resultType="org.jeecg.modules.graduation.vo.ClassTreeVo">
+			SELECT a.id as value,a.class_name as label, a.major_id as parentId
+			from yd_class_info a
+	</select>
 </mapper>	

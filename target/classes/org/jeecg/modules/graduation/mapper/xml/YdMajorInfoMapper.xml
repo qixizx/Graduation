@@ -16,4 +16,9 @@
 			and a.faculty_id = #{queryName}
 		</if>
 	</select>
+	
+	<select id="findMajortyTree" resultType="org.jeecg.modules.graduation.vo.ClassTreeVo">
+			SELECT a.id as value,a.major as label, a.faculty_id as parentId
+			from yd_major_info a
+	</select>
 </mapper>
