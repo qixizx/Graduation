@@ -15,5 +15,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IYdFacultyInfoService extends IService<YdFacultyInfo> {
 	//查找院系树
-	public List<ClassTreeVo> findFacultyTree(); 
+	public List<ClassTreeVo> findFacultyTree(String facultyId); 
 }

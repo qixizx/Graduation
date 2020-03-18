@@ -9,6 +9,7 @@ import org.jeecg.modules.graduation.entity.YdTeacherInfo;
 import org.jeecg.modules.graduation.mapper.YdStudentInfoMapper;
 import org.jeecg.modules.graduation.service.IYdStudentInfoService;
 import org.jeecg.modules.graduation.service.IYdTeacherInfoService;
+import org.jeecg.modules.graduation.vo.ClassTreeVo;
 import org.jeecg.modules.system.service.ISysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,6 +46,11 @@ public class YdStudentInfoServiceImpl extends ServiceImpl<YdStudentInfoMapper, Y
 				queryName = ydTeacherInfo.getFacultyId();
 		}
 		return ydStudentInfoMapper.finStudentPageList(page,ydStudentInfo,queryName);
+	}
+	@Override
+	public List<ClassTreeVo> findStudentTree() {
+		// TODO Auto-generated method stub
+		return ydStudentInfoMapper.findStudentTree();
 	}
 
 }

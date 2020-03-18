@@ -22,9 +22,9 @@ public class YdFacultyInfoServiceImpl extends ServiceImpl<YdFacultyInfoMapper, Y
 	@Autowired
 	private YdFacultyInfoMapper ydFacultyInfoMapper;
 	@Override
-	public List<ClassTreeVo> findFacultyTree() {
+	public List<ClassTreeVo> findFacultyTree(String facultyId) {
 		// TODO Auto-generated method stub
-		return ydFacultyInfoMapper.findFacultyTree();
+		return ydFacultyInfoMapper.findFacultyTree(facultyId);
 	}
 
 }

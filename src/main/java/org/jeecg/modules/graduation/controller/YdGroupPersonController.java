@@ -13,7 +13,10 @@ import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.aspect.annotation.AutoLog;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.graduation.entity.YdGroupPerson;
+import org.jeecg.modules.graduation.entity.YdStudentInfo;
 import org.jeecg.modules.graduation.service.IYdGroupPersonService;
+import org.jeecg.modules.graduation.service.IYdStudentInfoService;
+
 import java.util.Date;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -49,6 +52,8 @@ public class YdGroupPersonController {
 	@Autowired
 	private IYdGroupPersonService ydGroupPersonService;
 	
+	@Autowired
+	private IYdStudentInfoService ydStudentInfoService;
 	/**
 	  * 分页列表查询
 	 * @param ydGroupPerson
@@ -73,6 +78,55 @@ public class YdGroupPersonController {
 		return result;
 	}
 	
+	
+	/**
+	  * 分页查询关联学生
+	 * @param ydGroupPerson
+	 * @param pageNo
+	 * @param pageSize
+	 * @param req
+	 * @return
+	 */
+	@AutoLog(value = "分组关系表-分页列表查询")
+	@ApiOperation(value="分组关系表-分页列表查询", notes="分组关系表-分页列表查询")
+	@GetMapping(value = "/findGroupStudent")
+	public Result<IPage<YdGroupPerson>> findGroupStudent(YdGroupPerson ydGroupPerson,
+									  @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+									  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
+									  HttpServletRequest req) {
+		Result<IPage<YdGroupPerson>> result = new Result<IPage<YdGroupPerson>>();
+		Page<YdGroupPerson> page = new Page<YdGroupPerson>(pageNo, pageSize);
+		IPage<YdGroupPerson> pageList = ydGroupPersonService.findGroupStudent(page, ydGroupPerson);
+		result.setSuccess(true);
+		result.setResult(pageList);
+		return result;
+	}
+	
+	
+	/**
+	  * 分页查询老师
+	 * @param ydGroupPerson
+	 * @param pageNo
+	 * @param pageSize
+	 * @param req
+	 * @return
+	 */
+	@AutoLog(value = "分组关系表-分页列表查询")
+	@ApiOperation(value="分组关系表-分页列表查询", notes="分组关系表-分页列表查询")
+	@GetMapping(value = "/findGroupTeacher")
+	public Result<IPage<YdGroupPerson>> findGroupTeacher(YdGroupPerson ydGroupPerson,
+									  @RequestParam(name="pageNo", defaultValue="1") Integer pageNo,
+									  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
+									  HttpServletRequest req) {
+		Result<IPage<YdGroupPerson>> result = new Result<IPage<YdGroupPerson>>();
+		Page<YdGroupPerson> page = new Page<YdGroupPerson>(pageNo, pageSize);
+		IPage<YdGroupPerson> pageList = ydGroupPersonService.findGroupTeacher(page, ydGroupPerson);
+		result.setSuccess(true);
+		result.setResult(pageList);
+		return result;
+	}
+	
+	
 	/**
 	  *   添加
 	 * @param ydGroupPerson
@@ -84,6 +138,10 @@ public class YdGroupPersonController {
 	public Result<YdGroupPerson> add(@RequestBody YdGroupPerson ydGroupPerson) {
 		Result<YdGroupPerson> result = new Result<YdGroupPerson>();
 		try {
+			if("0".equals(ydGroupPerson.getType())) {
+				YdStudentInfo ydStudentInfo = ydStudentInfoService.getById(ydGroupPerson.getRealId());
+			}
+			
 			ydGroupPersonService.save(ydGroupPerson);
 			result.success("添加成功！");
 		} catch (Exception e) {

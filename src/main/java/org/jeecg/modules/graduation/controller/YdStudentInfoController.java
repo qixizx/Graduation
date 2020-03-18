@@ -23,7 +23,14 @@ import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.common.util.PasswordUtil;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.graduation.entity.YdStudentInfo;
+import org.jeecg.modules.graduation.entity.YdTeacherInfo;
+import org.jeecg.modules.graduation.service.IYdClassInfoService;
+import org.jeecg.modules.graduation.service.IYdFacultyInfoService;
+import org.jeecg.modules.graduation.service.IYdMajorInfoService;
 import org.jeecg.modules.graduation.service.IYdStudentInfoService;
+import org.jeecg.modules.graduation.service.IYdTeacherInfoService;
+import org.jeecg.modules.graduation.vo.ClassTreeVo;
+import org.jeecg.modules.graduation.vo.TestTreeList;
 import org.jeecg.modules.system.entity.SysUser;
 import org.jeecg.modules.system.service.ISysUserService;
 import org.jeecgframework.poi.excel.ExcelImportUtil;
@@ -69,7 +76,15 @@ public class YdStudentInfoController {
 	@Autowired
 	private IYdStudentInfoService ydStudentInfoService;
 	@Autowired
+	private IYdTeacherInfoService ydTeacherInfoService;
+	@Autowired
 	private ISysUserService sysUserService;
+	@Autowired
+	private IYdClassInfoService ydClassInfoService;
+	@Autowired
+	private IYdFacultyInfoService ydFacultyInfoService;
+	@Autowired
+	private IYdMajorInfoService ydMajorInfoService;
 	/**
 	  * 分页列表查询
 	 * @param ydStudentInfo
@@ -95,6 +110,39 @@ public class YdStudentInfoController {
 		result.setResult(pageList);
 		return result;
 	}
+	
+	
+	@AutoLog(value = "学生树显示")
+	@ApiOperation(value="学生树显示", notes="学生树显示")
+	@GetMapping(value = "/studentTree")
+	public Result<List<ClassTreeVo>> studentTree() {
+		Result<List<ClassTreeVo>> result = new Result<List<ClassTreeVo>>();
+		LoginUser sysUser = (LoginUser) SecurityUtils.getSubject()
+				.getPrincipal();
+		List<String> list = sysUserService.getRole(sysUser.getUsername());
+		String facultyId = null;
+		  // 判断是否是老师或者教务人员 只查自己院系的信息 
+		if (list.contains("academic") ||list.contains("teacher")) { 
+			YdTeacherInfo ydTeacherInfo =ydTeacherInfoService.findTeacherInfo(sysUser.getUsername());
+			facultyId = ydTeacherInfo.getFacultyId();
+		}	
+		List<ClassTreeVo> facultyList=ydFacultyInfoService.findFacultyTree(facultyId);
+		List<ClassTreeVo> classList=ydClassInfoService.findClassTree();
+		List<ClassTreeVo> majorList=ydMajorInfoService.findMajortyTree();
+		List<ClassTreeVo> studentList=ydStudentInfoService.findStudentTree();
+		List<ClassTreeVo> voList=new ArrayList<ClassTreeVo>();
+		voList.addAll(facultyList);
+		voList.addAll(majorList);
+		voList.addAll(classList);
+		voList.addAll(studentList);
+		TestTreeList testTreeList = new TestTreeList();
+		List<ClassTreeVo> studentTree = testTreeList.buildChilTree(voList,"");
+		result.setSuccess(true);
+		result.setResult(studentTree);
+		return result;
+	}
+	
+	
 	/**
 	  *   添加
 	 * @param ydStudentInfo

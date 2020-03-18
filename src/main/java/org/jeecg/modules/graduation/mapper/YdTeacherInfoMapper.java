@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 import org.jeecg.modules.graduation.entity.YdTeacherInfo;
+import org.jeecg.modules.graduation.vo.ClassTreeVo;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -23,4 +24,6 @@ public interface YdTeacherInfoMapper extends BaseMapper<YdTeacherInfo> {
 	public List<YdTeacherInfo> listImport(@Param("map")YdTeacherInfo ydTeacherInfo) ;
 	
 	public YdTeacherInfo findTeacherInfo(String username);
+	
+	public List<ClassTreeVo> findTeacherTree();
 }

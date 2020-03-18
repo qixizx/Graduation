@@ -2,6 +2,8 @@ package org.jeecg.modules.graduation.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
+
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
@@ -70,4 +72,21 @@ public class YdGroup {
     @ApiModelProperty(value = "删除状态（0，正常，1已删除）")
 	@TableLogic(value="0",delval = "1")
 	private java.lang.String delFlag;
+    
+	/** 班级名称 */
+	@TableField(exist = false)
+	private java.lang.String className;
+	/** 专业id */
+	@TableField(exist = false)
+	private java.lang.String majorId;
+	/** 院系id */
+	@TableField(exist = false)
+	private java.lang.String facultyId;
+	/** 筛选条件 */ 
+	@TableField(exist = false)
+	private List<java.lang.String> labels;
+	/** 筛选条件 */ 
+	@TableField(exist = false)
+	private java.lang.String trealname;
+	
 }

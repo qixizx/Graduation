@@ -3,6 +3,7 @@ package org.jeecg.modules.graduation.service;
 import java.util.List;
 
 import org.jeecg.modules.graduation.entity.YdTeacherInfo;
+import org.jeecg.modules.graduation.vo.ClassTreeVo;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -23,4 +24,7 @@ public interface IYdTeacherInfoService extends IService<YdTeacherInfo> {
 	
 	//根据 用户名查用户信息
 	public YdTeacherInfo  findTeacherInfo(String username);
+	
+	//老师基础树
+	public List<ClassTreeVo> findTeacherTree();
 }

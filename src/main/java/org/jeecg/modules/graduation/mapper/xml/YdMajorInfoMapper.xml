@@ -20,5 +20,7 @@
 	<select id="findMajortyTree" resultType="org.jeecg.modules.graduation.vo.ClassTreeVo">
 			SELECT a.id as value,a.major as label, a.faculty_id as parentId
 			from yd_major_info a
+			WHERE  a.del_flag ='0'
 	</select>
+
 </mapper>

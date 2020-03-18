@@ -5,6 +5,7 @@ import java.util.List;
 import org.jeecg.modules.graduation.entity.YdTeacherInfo;
 import org.jeecg.modules.graduation.mapper.YdTeacherInfoMapper;
 import org.jeecg.modules.graduation.service.IYdTeacherInfoService;
+import org.jeecg.modules.graduation.vo.ClassTreeVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +40,11 @@ public class YdTeacherInfoServiceImpl extends ServiceImpl<YdTeacherInfoMapper, Y
 	public YdTeacherInfo findTeacherInfo(String username) {
 		// TODO Auto-generated method stub
 		return ydTeacherInfoMapper.findTeacherInfo(username);
+	}
+	@Override
+	public List<ClassTreeVo> findTeacherTree() {
+		// TODO Auto-generated method stub
+		return ydTeacherInfoMapper.findTeacherTree();
 	}
 
 }

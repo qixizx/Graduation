@@ -31,4 +31,10 @@
             and a.class_id = #{map.classId}
 	    </if>
 	</select>
+	
+	<select id="findStudentTree" resultType="org.jeecg.modules.graduation.vo.ClassTreeVo">
+			SELECT a.id as value,a.realname as label, a.class_id as parentId
+			from yd_student_info a
+			WHERE  a.del_flag ='0'
+	</select>
 </mapper>

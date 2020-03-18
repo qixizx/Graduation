@@ -4,6 +4,10 @@
 	<select id="findFacultyTree" resultType="org.jeecg.modules.graduation.vo.ClassTreeVo">
 			SELECT a.id as value,a.faculty as label, "" as parentId
 			from yd_faculty_info a
+			where a.del_flag='0'
+			<if test="facultyId != null and facultyId!=''">
+				and a.id =#{facultyId}
+			</if>
 	</select>
 	
 </mapper>

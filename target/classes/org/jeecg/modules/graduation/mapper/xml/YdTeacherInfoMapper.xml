@@ -48,5 +48,12 @@
 		SELECT a.* 
 		from yd_teacher_info a
 		WHERE  a.username = #{username}
+		and a.del_flag ='0'
+	</select>
+	
+	<select id="findTeacherTree" resultType="org.jeecg.modules.graduation.vo.ClassTreeVo">
+			SELECT a.id as value,a.realname as label, a.faculty_id as parentId
+			from yd_teacher_info a
+			WHERE  a.del_flag ='0'
 	</select>
 </mapper>

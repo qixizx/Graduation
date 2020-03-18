@@ -1,5 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.jeecg.modules.graduation.mapper.YdGroupPersonMapper">
-
+	<select id="findGroupStudent" resultType="org.jeecg.modules.graduation.entity.YdGroupPerson">
+		SELECT a.*,b.username,b.realname
+		FROM yd_group_person a
+		LEFT JOIN yd_student_info b on a.real_id =b.id
+		WHERE a.del_flag='0'
+		AND a.type='0'
+		<if test="map.groupId != null and map.groupId !=''">
+			and a.groupId = #{map.groupId}
+		</if>
+		<if test="map.realname != null and map.realname !=''">
+			and b.realname LIKE CONCAT('%','${map.realname}','%')
+		</if>
+		<if test="map.username != null and map.username !=''">
+			and b.username LIKE CONCAT('%','${map.username}','%')
+		</if>
+		<if test="map.type != null and map.type !=''">
+			and a.type = #{map.type}
+		</if>
+	</select>
+	<select id="findGroupTeacher" resultType="org.jeecg.modules.graduation.entity.YdGroupPerson">
+		SELECT a.*,b.username,b.realname
+		FROM yd_group_person a
+		LEFT JOIN yd_teacher_info b on a.real_id =b.id
+		WHERE a.del_flag='0'
+		AND a.type!='0'
+		<if test="map.groupId != null and map.groupId !=''">
+			and a.groupId = #{map.groupId}
+		</if>
+		<if test="map.realname != null and map.realname !=''">
+			and b.realname LIKE CONCAT('%','${map.realname}','%')
+		</if>
+		<if test="map.username != null and map.username !=''">
+			and b.username LIKE CONCAT('%','${map.username}','%')
+		</if>
+		<if test="map.type != null and map.type !=''">
+			and a.type = #{map.type}
+		</if>
+	</select>
 </mapper>

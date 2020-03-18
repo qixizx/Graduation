@@ -1,6 +1,9 @@
 package org.jeecg.modules.graduation.service;
 
 import org.jeecg.modules.graduation.entity.YdGroup;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -10,5 +13,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @Version: V1.0
  */
 public interface IYdGroupService extends IService<YdGroup> {
+	//查询分组表页面
+	public IPage<YdGroup> findGroupPageList(Page<YdGroup> page, YdGroup ydGroup);
 
+	
 }

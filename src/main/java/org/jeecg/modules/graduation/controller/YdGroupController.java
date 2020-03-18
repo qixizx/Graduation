@@ -13,6 +13,8 @@ import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.aspect.annotation.AutoLog;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.graduation.entity.YdGroup;
+import org.jeecg.modules.graduation.entity.YdGroupPerson;
+import org.jeecg.modules.graduation.service.IYdGroupPersonService;
 import org.jeecg.modules.graduation.service.IYdGroupService;
 import java.util.Date;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -48,7 +50,8 @@ import io.swagger.annotations.ApiOperation;
 public class YdGroupController {
 	@Autowired
 	private IYdGroupService ydGroupService;
-	
+	@Autowired
+	private IYdGroupPersonService ydGroupPersonService;
 	/**
 	  * 分页列表查询
 	 * @param ydGroup
@@ -65,9 +68,10 @@ public class YdGroupController {
 									  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 									  HttpServletRequest req) {
 		Result<IPage<YdGroup>> result = new Result<IPage<YdGroup>>();
-		QueryWrapper<YdGroup> queryWrapper = QueryGenerator.initQueryWrapper(ydGroup, req.getParameterMap());
+//		QueryWrapper<YdGroup> queryWrapper = QueryGenerator.initQueryWrapper(ydGroup, req.getParameterMap());
 		Page<YdGroup> page = new Page<YdGroup>(pageNo, pageSize);
-		IPage<YdGroup> pageList = ydGroupService.page(page, queryWrapper);
+//		IPage<YdGroup> pageList = ydGroupService.page(page, queryWrapper);
+		IPage<YdGroup> pageList = ydGroupService.findGroupPageList(page,ydGroup);
 		result.setSuccess(true);
 		result.setResult(pageList);
 		return result;
@@ -85,6 +89,13 @@ public class YdGroupController {
 		Result<YdGroup> result = new Result<YdGroup>();
 		try {
 			ydGroupService.save(ydGroup);
+			//建立小组的同时吧导师加入  之后只需要加入审阅老师和学生即可
+			YdGroupPerson ydGroupPerson = new YdGroupPerson();
+			ydGroupPerson.setGroupId(ydGroup.getId());
+			ydGroupPerson.setRealId(ydGroup.getTutorId());
+			ydGroupPerson.setType("1");
+			ydGroupPerson.setDelFlag("0");
+			ydGroupPersonService.save(ydGroupPerson);
 			result.success("添加成功！");
 		} catch (Exception e) {
 			log.error(e.getMessage(),e);

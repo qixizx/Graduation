@@ -1,5 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.jeecg.modules.graduation.mapper.YdGroupMapper">
-
+	<select id="findGroupPageList" resultType="org.jeecg.modules.graduation.entity.YdGroup">
+		select a.*,b.class_name,b.major_id,c.faculty_id,e.realname as trealname
+		from  yd_group a
+		LEFT join yd_class_info b on a.class_id=b.id
+		left join yd_major_info c on b.major_id =c.id
+		left join yd_faculty_info d on c.faculty_id = d.id
+		left join yd_teacher_info e on a.tutor_id = e.id
+		WHERE  a.del_flag ='0'
+		<if test="facultyId != null and facultyId !=''">
+			and d.id =#{facultyId}
+		</if>
+		<if test="map.gname != null and map.gname !=''">
+            and a.gname LIKE CONCAT('%','${map.gname}','%')
+	    </if>
+		<if test="map.tutorId != null and map.tutorId !=''">
+            and a.tutor_id = #{map.tutorId}
+	    </if>
+		<if test="map.classId != null and map.classId!=''">
+            and a.class_id = #{map.classId}
+	    </if>
+	    <if test="map.majorId != null and map.majorId!=''">
+            and b.major_id = #{map.majorId}
+	    </if>
+	    <if test="map.facultyId != null and map.facultyId!=''">
+            and c.faculty_id = #{map.facultyId}
+	    </if>
+	</select>
 </mapper>

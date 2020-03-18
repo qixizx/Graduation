@@ -2,6 +2,7 @@ package org.jeecg.modules.graduation.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
 import org.jeecg.modules.graduation.entity.YdFacultyInfo;
 import org.jeecg.modules.graduation.vo.ClassTreeVo;
 
@@ -14,5 +15,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @Version: V1.0
  */
 public interface YdFacultyInfoMapper extends BaseMapper<YdFacultyInfo> {
-	public List<ClassTreeVo> findFacultyTree();
+	public List<ClassTreeVo> findFacultyTree(@Param("facultyId") String facultyId);
 }
