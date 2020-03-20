@@ -30,6 +30,9 @@
 		<if test="map.classId != null and map.classId!=''">
             and a.class_id = #{map.classId}
 	    </if>
+	    <if test="map.isGroup != null and map.isGroup!=''">
+            and a.is_group = #{map.isGroup}
+	    </if>
 	</select>
 	
 	<select id="findStudentTree" resultType="org.jeecg.modules.graduation.vo.ClassTreeVo">

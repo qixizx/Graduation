@@ -1,6 +1,8 @@
 package org.jeecg.modules.graduation.controller;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.io.IOException;
@@ -13,9 +15,12 @@ import org.jeecg.common.system.query.QueryGenerator;
 import org.jeecg.common.aspect.annotation.AutoLog;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.graduation.entity.YdGroupPerson;
+import org.jeecg.modules.graduation.entity.YdGroupPersonVo;
 import org.jeecg.modules.graduation.entity.YdStudentInfo;
 import org.jeecg.modules.graduation.service.IYdGroupPersonService;
 import org.jeecg.modules.graduation.service.IYdStudentInfoService;
+import org.jeecg.modules.system.entity.SysUserRole;
+import org.jeecg.modules.system.vo.SysUserRoleVO;
 
 import java.util.Date;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -139,9 +144,11 @@ public class YdGroupPersonController {
 		Result<YdGroupPerson> result = new Result<YdGroupPerson>();
 		try {
 			if("0".equals(ydGroupPerson.getType())) {
+				//改变学生小组状态
 				YdStudentInfo ydStudentInfo = ydStudentInfoService.getById(ydGroupPerson.getRealId());
+				ydStudentInfo.setIsGroup("0");
+				ydStudentInfoService.updateById(ydStudentInfo);
 			}
-			
 			ydGroupPersonService.save(ydGroupPerson);
 			result.success("添加成功！");
 		} catch (Exception e) {
@@ -150,6 +157,49 @@ public class YdGroupPersonController {
 		}
 		return result;
 	}
+	
+	
+	/**
+	 * 给指定群组添加用户
+	 *
+	 * @param
+	 * @return
+	 */
+	@AutoLog(value = "分组关系表-给指定群组添加用户")
+	@ApiOperation(value="分组关系表-给指定群组添加用户", notes="分组关系表-给指定群组添加用户")
+	@RequestMapping(value = "/addGroupUser")
+	public Result<String> addGroupUser(@RequestBody YdGroupPersonVo ydGroupPersonVo) {
+		Result<String> result = new Result<String>();
+		try {
+			String groupId = ydGroupPersonVo.getGroupId();
+			String type = ydGroupPersonVo.getType();
+			for (String realId : ydGroupPersonVo.getRealIdList()) {
+				YdGroupPerson ydGroupPerson = new YdGroupPerson();
+				ydGroupPerson.setGroupId(groupId);
+				ydGroupPerson.setRealId(realId);
+				ydGroupPerson.setType(type);
+				QueryWrapper<YdGroupPerson> queryWrapper = new QueryWrapper<YdGroupPerson>();
+				queryWrapper.eq("group_id", groupId).eq("real_id", realId).eq("type", type);
+				YdGroupPerson one = ydGroupPersonService.getOne(queryWrapper);
+				if (one == null) {
+					ydGroupPersonService.save(ydGroupPerson);
+				}
+				//改变学生小组状态
+				YdStudentInfo ydStudentInfo = ydStudentInfoService.getById(ydGroupPerson.getRealId());
+				ydStudentInfo.setIsGroup("0");
+				ydStudentInfoService.updateById(ydStudentInfo);
+			}
+			result.setMessage("添加成功!");
+			result.setSuccess(true);
+			return result;
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			result.setSuccess(false);
+			result.setMessage("出错了: " + e.getMessage());
+			return result;
+		}
+	}
+	
 	
 	/**
 	  *  编辑
@@ -185,6 +235,13 @@ public class YdGroupPersonController {
 	@DeleteMapping(value = "/delete")
 	public Result<?> delete(@RequestParam(name="id",required=true) String id) {
 		try {
+			YdGroupPerson ydGroupPerson = ydGroupPersonService.getById(id);
+			if("0".equals(ydGroupPerson.getType())) {
+				//解除加入小组状态
+				YdStudentInfo ydStudentInfo = ydStudentInfoService.getById(ydGroupPerson.getRealId());
+				ydStudentInfo.setIsGroup("1");
+				ydStudentInfoService.updateById(ydStudentInfo);
+			}
 			ydGroupPersonService.removeById(id);
 		} catch (Exception e) {
 			log.error("删除失败",e.getMessage());
@@ -201,11 +258,24 @@ public class YdGroupPersonController {
 	@AutoLog(value = "分组关系表-批量删除")
 	@ApiOperation(value="分组关系表-批量删除", notes="分组关系表-批量删除")
 	@DeleteMapping(value = "/deleteBatch")
-	public Result<YdGroupPerson> deleteBatch(@RequestParam(name="ids",required=true) String ids) {
+	public Result<YdGroupPerson> deleteBatch(@RequestParam(name="ids",required=true) String ids,@RequestParam(name="type",defaultValue="1") String type) {
 		Result<YdGroupPerson> result = new Result<YdGroupPerson>();
 		if(ids==null || "".equals(ids.trim())) {
 			result.error500("参数不识别！");
 		}else {
+			if("0".equals(type)) {
+				//如果是学生需要解除自身组
+				//根据id批量查询
+				Collection<YdGroupPerson> ydGroupPersons=this.ydGroupPersonService.listByIds(Arrays.asList(ids.split(",")));
+				//collection转list   查出来所有的list
+				List<YdGroupPerson> studentItems = new ArrayList<YdGroupPerson>(ydGroupPersons);
+				for (YdGroupPerson item : studentItems) {
+					//查询该学生信息
+					YdStudentInfo ydStudentInfo = ydStudentInfoService.getById(item.getRealId());
+					ydStudentInfo.setIsGroup("1");
+					ydStudentInfoService.updateById(ydStudentInfo);
+				}
+			}
 			this.ydGroupPersonService.removeByIds(Arrays.asList(ids.split(",")));
 			result.success("删除成功!");
 		}

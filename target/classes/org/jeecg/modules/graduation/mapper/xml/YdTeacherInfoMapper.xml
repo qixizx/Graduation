@@ -21,6 +21,9 @@
 		<if test="map.type != null and map.type!=''">
           and a.type = #{map.type}
 	    </if>
+	    <if test="map.id != null and map.id!=''">
+          and a.id != #{map.id}
+	    </if>
 	</select>
 	
 	<select id="listImport" resultType="org.jeecg.modules.graduation.entity.YdTeacherInfo">

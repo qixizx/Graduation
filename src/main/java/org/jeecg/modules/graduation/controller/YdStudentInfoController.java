@@ -228,7 +228,6 @@ public class YdStudentInfoController {
 				result.success("修改成功!");
 			}
 		}
-		
 		return result;
 	}
 //	/**

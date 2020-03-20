@@ -8,7 +8,7 @@
 		WHERE a.del_flag='0'
 		AND a.type='0'
 		<if test="map.groupId != null and map.groupId !=''">
-			and a.groupId = #{map.groupId}
+			and a.group_id = #{map.groupId}
 		</if>
 		<if test="map.realname != null and map.realname !=''">
 			and b.realname LIKE CONCAT('%','${map.realname}','%')
@@ -27,7 +27,7 @@
 		WHERE a.del_flag='0'
 		AND a.type!='0'
 		<if test="map.groupId != null and map.groupId !=''">
-			and a.groupId = #{map.groupId}
+			and a.group_id = #{map.groupId}
 		</if>
 		<if test="map.realname != null and map.realname !=''">
 			and b.realname LIKE CONCAT('%','${map.realname}','%')
