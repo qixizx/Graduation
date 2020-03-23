@@ -184,10 +184,13 @@ public class YdGroupPersonController {
 				if (one == null) {
 					ydGroupPersonService.save(ydGroupPerson);
 				}
-				//改变学生小组状态
-				YdStudentInfo ydStudentInfo = ydStudentInfoService.getById(ydGroupPerson.getRealId());
-				ydStudentInfo.setIsGroup("0");
-				ydStudentInfoService.updateById(ydStudentInfo);
+				if("0".equals(type)) {
+					//改变学生小组状态
+					YdStudentInfo ydStudentInfo = ydStudentInfoService.getById(ydGroupPerson.getRealId());
+					ydStudentInfo.setIsGroup("0");
+					ydStudentInfoService.updateById(ydStudentInfo);
+				}
+
 			}
 			result.setMessage("添加成功!");
 			result.setSuccess(true);

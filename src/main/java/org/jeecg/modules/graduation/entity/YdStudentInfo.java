@@ -111,4 +111,13 @@ public class YdStudentInfo {
 	/** 班级名称 */
 	@TableField(exist = false)
 	private java.lang.String className;
+	/** 头像地址 */
+	@TableField(exist = false)
+	private java.lang.String filePath;
+	
+	
+	//毕业设计部分添加字段
+	/** 头像地址 */
+	@TableField(exist = false)
+	private java.lang.String teacherId;
 }

@@ -14,6 +14,7 @@ import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.jeecg.common.aspect.annotation.Dict;
 import org.jeecgframework.poi.excel.annotation.Excel;
 
 /**
@@ -42,9 +43,10 @@ public class YdSubjectInfo {
     @ApiModelProperty(value = "老师id")
 	private java.lang.String teacherId;
 	/**未提交0 已提交1  未通过 2 已通过  3*/
-	@Excel(name = "未提交0 已提交1  未通过 2 已通过  3", width = 15)
+	@Excel(name = "状态（提交状态）", width = 15)
     @ApiModelProperty(value = "未提交0 已提交1  未通过 2 已通过  3")
-	private java.lang.String status;
+	@Dict(dicCode = "bs_state")
+	private java.lang.String state;
 	/**提交时间*/
 	@Excel(name = "提交时间", width = 20, format = "yyyy-MM-dd HH:mm:ss")
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
@@ -58,7 +60,7 @@ public class YdSubjectInfo {
 	/**课题描述*/
 	@Excel(name = "课题描述", width = 15)
     @ApiModelProperty(value = "课题描述")
-	private java.lang.String describe;
+	private java.lang.String recommend;
 	/**添加人*/
     @ApiModelProperty(value = "添加人")
 	private java.lang.String createBy;
@@ -80,4 +82,15 @@ public class YdSubjectInfo {
     @ApiModelProperty(value = "删除状态（0，正常，1已删除）")
 	@TableLogic(value="0",delval = "1")
 	private java.lang.String delFlag;
+	
+	
+	/** 老师名字*/
+	@TableField(exist = false)
+	private java.lang.String tname;
+	/** 学生名字 */
+	@TableField(exist = false)
+	private java.lang.String sname;
+	/** 学生账号 */
+	@TableField(exist = false)
+	private java.lang.String suname;
 }

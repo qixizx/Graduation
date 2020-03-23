@@ -38,7 +38,7 @@ public class YdMajorInfo {
     @ApiModelProperty(value = "专业名称")
 	private java.lang.String major;
 	/**所属院系*/
-	@Excel(name = "所属院系", width = 15)
+	@Excel(name = "所属院系", width = 15,dictTable="yd_faculty_info",dicCode="id",dicText="faculty")
     @ApiModelProperty(value = "所属院系")
 	private java.lang.String facultyId;
 	/**专业描述*/

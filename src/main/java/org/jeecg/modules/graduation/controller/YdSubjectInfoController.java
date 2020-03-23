@@ -8,12 +8,24 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
+import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.common.aspect.annotation.AutoLog;
 import org.jeecg.common.util.oConvertUtils;
+import org.jeecg.modules.graduation.entity.YdGroup;
+import org.jeecg.modules.graduation.entity.YdGroupPerson;
+import org.jeecg.modules.graduation.entity.YdStudentInfo;
 import org.jeecg.modules.graduation.entity.YdSubjectInfo;
+import org.jeecg.modules.graduation.entity.YdTeacherInfo;
+import org.jeecg.modules.graduation.service.IYdGroupService;
+import org.jeecg.modules.graduation.service.IYdStudentInfoService;
 import org.jeecg.modules.graduation.service.IYdSubjectInfoService;
+import org.jeecg.modules.graduation.service.IYdTeacherInfoService;
+import org.jeecg.modules.system.service.ISysUserService;
+
 import java.util.Date;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -48,7 +60,11 @@ import io.swagger.annotations.ApiOperation;
 public class YdSubjectInfoController {
 	@Autowired
 	private IYdSubjectInfoService ydSubjectInfoService;
+	@Autowired
+	private ISysUserService sysUserService;
 	
+	@Autowired
+	private IYdStudentInfoService ydStudentInfoService;
 	/**
 	  * 分页列表查询
 	 * @param ydSubjectInfo
@@ -65,11 +81,37 @@ public class YdSubjectInfoController {
 									  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 									  HttpServletRequest req) {
 		Result<IPage<YdSubjectInfo>> result = new Result<IPage<YdSubjectInfo>>();
-		QueryWrapper<YdSubjectInfo> queryWrapper = QueryGenerator.initQueryWrapper(ydSubjectInfo, req.getParameterMap());
+//		QueryWrapper<YdSubjectInfo> queryWrapper = QueryGenerator.initQueryWrapper(ydSubjectInfo, req.getParameterMap());
 		Page<YdSubjectInfo> page = new Page<YdSubjectInfo>(pageNo, pageSize);
-		IPage<YdSubjectInfo> pageList = ydSubjectInfoService.page(page, queryWrapper);
+//		IPage<YdSubjectInfo> pageList = ydSubjectInfoService.page(page, queryWrapper);
+		IPage<YdSubjectInfo> pageList = ydSubjectInfoService.findSubjectPageList(page,ydSubjectInfo);
 		result.setSuccess(true);
 		result.setResult(pageList);
+		return result;
+	}
+	
+	/**
+	  * 通过登录人查询
+	 * @param id
+	 * @return
+	 */
+	@AutoLog(value = "选题信息表-通过登录人查询")
+	@ApiOperation(value="选题信息表-通过登录人查询", notes="选题信息表-通过登录人查询")
+	@GetMapping(value = "/queryLogin")
+	public Result<YdSubjectInfo> queryLoginSubjectInfo() {
+		Result<YdSubjectInfo> result = new Result<YdSubjectInfo>();
+		LoginUser sysUser = (LoginUser) SecurityUtils.getSubject()
+				.getPrincipal();
+		YdStudentInfo ydStudentInfo =ydStudentInfoService.findGroupTutor(sysUser.getUsername());
+		QueryWrapper<YdSubjectInfo> queryWrapper = new QueryWrapper<YdSubjectInfo>();
+		queryWrapper.eq("stu_id", ydStudentInfo.getId());
+		YdSubjectInfo ydSubjectInfo = ydSubjectInfoService.getOne(queryWrapper);
+		if(ydSubjectInfo==null) {
+			result.error500("未找到对应实体");
+		}else {
+			result.setResult(ydSubjectInfo);
+			result.setSuccess(true);
+		}
 		return result;
 	}
 	
@@ -84,6 +126,34 @@ public class YdSubjectInfoController {
 	public Result<YdSubjectInfo> add(@RequestBody YdSubjectInfo ydSubjectInfo) {
 		Result<YdSubjectInfo> result = new Result<YdSubjectInfo>();
 		try {
+			ydSubjectInfo.setCommitTime(new Date());
+			
+			LoginUser sysUser = (LoginUser) SecurityUtils.getSubject()
+					.getPrincipal();
+			List<String> list = sysUserService.getRole(sysUser.getUsername());
+			// 判断是否是学生
+			if (list.contains("student")) {
+				//设置 提交状态
+				ydSubjectInfo.setState("1");
+				
+				YdStudentInfo ydStudentInfo =ydStudentInfoService.findGroupTutor(sysUser.getUsername());
+				//设置学生id
+				ydSubjectInfo.setStuId(ydStudentInfo.getId());
+				if(ydStudentInfo.getTeacherId()==null || "".equals(ydStudentInfo.getTeacherId())) {
+					result.error500("操作失败,您当前为加入设计小组，请联系导师加入小组！");
+					return result;
+				}else {
+					
+					//设置老师id
+					ydSubjectInfo.setTeacherId(ydStudentInfo.getTeacherId());
+				}
+				
+			}else {
+				//如果状态为1不能提交新的选题信息
+				if(ydSubjectInfo.getState()==null || "".equals( ydSubjectInfo.getState().trim())) {
+					ydSubjectInfo.setState("0");
+				}
+			}
 			ydSubjectInfoService.save(ydSubjectInfo);
 			result.success("添加成功！");
 		} catch (Exception e) {
@@ -107,6 +177,9 @@ public class YdSubjectInfoController {
 		if(ydSubjectInfoEntity==null) {
 			result.error500("未找到对应实体");
 		}else {
+			if(ydSubjectInfo.getState()==null || "".equals( ydSubjectInfo.getState().trim())) {
+				ydSubjectInfo.setState("0");
+			}
 			boolean ok = ydSubjectInfoService.updateById(ydSubjectInfo);
 			//TODO 返回false说明什么？
 			if(ok) {

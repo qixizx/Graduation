@@ -40,4 +40,22 @@
 			from yd_student_info a
 			WHERE  a.del_flag ='0'
 	</select>
+	<select id="findStudentInfo" resultType="org.jeecg.modules.graduation.entity.YdStudentInfo">
+	<!-- 查找学生头像 -->
+			SELECT a.*,c.file_path
+			from yd_student_info a
+			LEFT join sys_user b on a.user_id=b.id
+			LEFT JOIN sys_file_manage c on b.avatar =c.id
+			WHERE  a.username = #{username}
+			and a.del_flag ='0'
+	</select>
+	<select id="findGroupTutor" resultType="org.jeecg.modules.graduation.entity.YdStudentInfo">
+	<!-- 通过登录账号 查找该学生的导师id 以及学生信息 -->
+		SELECT a.*,c.tutor_id as teacherId
+		FROM yd_student_info a
+		JOIN yd_group_person b on b.real_id =a.id
+		JOIN yd_group c on b.group_id = c.id
+		WHERE a.username = #{username}
+		and a.del_flag ='0'
+	</select>
 </mapper>

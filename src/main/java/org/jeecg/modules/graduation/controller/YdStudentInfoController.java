@@ -230,6 +230,7 @@ public class YdStudentInfoController {
 		}
 		return result;
 	}
+	
 //	/**
 //	  *  编辑
 //	 * @param ydStudentInfo

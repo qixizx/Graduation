@@ -21,4 +21,8 @@ public interface YdStudentInfoMapper extends BaseMapper<YdStudentInfo> {
 	public IPage<YdStudentInfo> finStudentPageList(Page<YdStudentInfo> page,@Param("map")YdStudentInfo ydStudentInfo, @Param("queryName") String queryName);
 
 	public List<ClassTreeVo> findStudentTree();
+	
+	public YdStudentInfo  findStudentInfo(String username);
+//	通过登录账号 查找该学生的导师id 以及学生信息
+	public YdStudentInfo findGroupTutor(String username);
 }

@@ -102,4 +102,10 @@ public class YdTeacherInfo {
 	/** 院系名称 */
 	@TableField(exist = false)
 	private java.lang.String faculty;	 
+	/** 头像地址 */
+	@TableField(exist = false)
+	private java.lang.String filePath;
+	/** 小组id */
+	@TableField(exist = false)
+	private java.lang.String groupId;
 }

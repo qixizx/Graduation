@@ -1,5 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.jeecg.modules.graduation.mapper.YdReportMapper">
+	<select id="findReportPageList" resultType="org.jeecg.modules.graduation.entity.YdReport">
+		SELECT a.*,b.realname as tname,c.realname as sname,c.username as sUname,d.subject_name,e.file_path,e.original_name as file_name
+		FROM yd_report a
+		LEFT JOIN yd_subject_info d on a.subject_id = d.id
+		LEFT join yd_teacher_info b on d.teacher_id =b.id
+		LEFT join yd_student_info c on a.stu_id = c.id
+		LEFT JOIN sys_file_manage e on e.id = a.file_id
+		WHERE a.del_flag = '0'
+		and c.class_id in (
+			SELECT c.id
+			FROM yd_class_info c
+			WHERE c.major_id in (
+				SELECT d.id
+				from yd_major_info d
+				LEFT JOIN yd_faculty_info e on  d.faculty_id=e.id
+				<if test="queryName != null and queryName!=''">
+					WHERE e.id = #{queryName}
+				</if>
+			)
+		)
+		<if test="teacherId != null and teacherId !=''">
+            and d.teacher_id = #{teacherId}
+	    </if>
+	    <if test="map.tname != null and map.tname !=''">
+            and b.realname LIKE CONCAT('%','${map.tname}','%')
+	    </if>
+	    <if test="map.sname != null and map.sname !=''">
+            and c.realname LIKE CONCAT('%','${map.sname}','%')
+	    </if>
+	    <if test="map.state != null and map.state !=''">
+            and a.state = #{map.state}
+	    </if>
+	    <if test="map.sUname != null and map.sUname !=''">
+            and c.username LIKE CONCAT('%','${map.suname}','%')
+	    </if>	
+	</select>
 
+
+
+	<select id="getSubjectByStuId" resultType="org.jeecg.modules.graduation.entity.YdReport">
+		SELECT a.*,b.file_path,b.original_name as fileName
+		from yd_report a
+		LEFT JOIN sys_file_manage b on b.id = a.file_id
+		WHERE a.del_flag='0'
+		and a.stu_id = #{stuId}
+	</select>
 </mapper>

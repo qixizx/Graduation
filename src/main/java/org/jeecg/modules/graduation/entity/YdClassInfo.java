@@ -63,7 +63,7 @@ public class YdClassInfo {
     @ApiModelProperty(value = "修改时间")
 	private java.util.Date updateTime;
 	/**删除状态（0，正常，1已删除）*/
-	@Excel(name = "删除状态（0，正常，1已删除）", width = 15)
+//	@Excel(name = "删除状态（0，正常，1已删除）", width = 15)
     @ApiModelProperty(value = "删除状态（0，正常，1已删除）")
 	@TableLogic(value="0",delval = "1")
 	private java.lang.String delFlag;

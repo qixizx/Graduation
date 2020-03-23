@@ -8,12 +8,21 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.shiro.SecurityUtils;
 import org.jeecg.common.api.vo.Result;
 import org.jeecg.common.system.query.QueryGenerator;
+import org.jeecg.common.system.vo.LoginUser;
 import org.jeecg.common.aspect.annotation.AutoLog;
 import org.jeecg.common.util.oConvertUtils;
 import org.jeecg.modules.graduation.entity.YdReport;
+import org.jeecg.modules.graduation.entity.YdStudentInfo;
+import org.jeecg.modules.graduation.entity.YdSubjectInfo;
 import org.jeecg.modules.graduation.service.IYdReportService;
+import org.jeecg.modules.graduation.service.IYdStudentInfoService;
+import org.jeecg.modules.graduation.service.IYdSubjectInfoService;
+import org.jeecg.modules.system.service.ISysUserService;
+
 import java.util.Date;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -48,7 +57,13 @@ import io.swagger.annotations.ApiOperation;
 public class YdReportController {
 	@Autowired
 	private IYdReportService ydReportService;
+	@Autowired
+	private ISysUserService sysUserService;
 	
+	@Autowired
+	private IYdStudentInfoService ydStudentInfoService;
+	@Autowired
+	private IYdSubjectInfoService ydSubjectInfoService;
 	/**
 	  * 分页列表查询
 	 * @param ydReport
@@ -65,13 +80,39 @@ public class YdReportController {
 									  @RequestParam(name="pageSize", defaultValue="10") Integer pageSize,
 									  HttpServletRequest req) {
 		Result<IPage<YdReport>> result = new Result<IPage<YdReport>>();
-		QueryWrapper<YdReport> queryWrapper = QueryGenerator.initQueryWrapper(ydReport, req.getParameterMap());
+//		QueryWrapper<YdReport> queryWrapper = QueryGenerator.initQueryWrapper(ydReport, req.getParameterMap());
 		Page<YdReport> page = new Page<YdReport>(pageNo, pageSize);
-		IPage<YdReport> pageList = ydReportService.page(page, queryWrapper);
+//		IPage<YdReport> pageList = ydReportService.page(page, queryWrapper);
+		IPage<YdReport> pageList = ydReportService.findReportPageList(page, ydReport);
 		result.setSuccess(true);
 		result.setResult(pageList);
 		return result;
 	}
+	
+	
+	
+	/**
+	  * 通过登录人查询
+	 * @return
+	 */
+	@AutoLog(value = "选题信息表-通过登录人查询")
+	@ApiOperation(value="选题信息表-通过登录人查询", notes="选题信息表-通过登录人查询")
+	@GetMapping(value = "/queryLogin")
+	public Result<YdReport> queryLoginReportInfo() {
+		Result<YdReport> result = new Result<YdReport>();
+		LoginUser sysUser = (LoginUser) SecurityUtils.getSubject()
+				.getPrincipal();
+		YdStudentInfo ydStudentInfo =ydStudentInfoService.findGroupTutor(sysUser.getUsername());
+		YdReport ydReport = ydReportService.getSubjectByStuId(ydStudentInfo.getId());
+		if(ydReport==null) {
+			result.error500("未找到对应实体");
+		}else {
+			result.setResult(ydReport);
+			result.setSuccess(true);
+		}
+		return result;
+	}
+	
 	
 	/**
 	  *   添加
@@ -84,6 +125,34 @@ public class YdReportController {
 	public Result<YdReport> add(@RequestBody YdReport ydReport) {
 		Result<YdReport> result = new Result<YdReport>();
 		try {
+			ydReport.setState("0");
+			ydReport.setCommitTime(new Date());
+			LoginUser sysUser = (LoginUser) SecurityUtils.getSubject()
+					.getPrincipal();
+			List<String> list = sysUserService.getRole(sysUser.getUsername());
+			// 判断是否是学生
+			if (list.contains("student")) {
+				//设置 提交状态
+				if(ydReport.getFileId() !=null && !"".equals(ydReport.getFileId())) {
+					ydReport.setState("1");
+				}else {
+					ydReport.setState("0");
+				}
+				YdStudentInfo ydStudentInfo =ydStudentInfoService.findGroupTutor(sysUser.getUsername());
+				//设置学生id
+				ydReport.setStuId(ydStudentInfo.getId());
+				if(ydStudentInfo.getTeacherId()==null || "".equals(ydStudentInfo.getTeacherId())) {
+					result.error500("操作失败,您当前为加入设计小组，请联系导师加入小组！");
+					return result;
+				}else {
+					QueryWrapper<YdSubjectInfo> queryWrapper = new QueryWrapper<YdSubjectInfo>();
+					queryWrapper.eq("stu_id", ydStudentInfo.getId());
+					YdSubjectInfo ydSubjectInfo = ydSubjectInfoService.getOne(queryWrapper);
+					//设置选题id
+					ydReport.setSubjectId(ydSubjectInfo.getId());
+				}
+				
+			}
 			ydReportService.save(ydReport);
 			result.success("添加成功！");
 		} catch (Exception e) {
@@ -107,6 +176,7 @@ public class YdReportController {
 		if(ydReportEntity==null) {
 			result.error500("未找到对应实体");
 		}else {
+			ydReport.setCommitTime(new Date());
 			boolean ok = ydReportService.updateById(ydReport);
 			//TODO 返回false说明什么？
 			if(ok) {

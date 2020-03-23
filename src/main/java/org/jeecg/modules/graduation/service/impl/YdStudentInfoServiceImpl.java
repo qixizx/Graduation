@@ -52,5 +52,15 @@ public class YdStudentInfoServiceImpl extends ServiceImpl<YdStudentInfoMapper, Y
 		// TODO Auto-generated method stub
 		return ydStudentInfoMapper.findStudentTree();
 	}
+	@Override
+	public YdStudentInfo findStudentInfo(String username) {
+		// TODO Auto-generated method stub
+		return ydStudentInfoMapper.findStudentInfo(username);
+	}
+	@Override
+	public YdStudentInfo findGroupTutor(String username) {
+		// TODO Auto-generated method stub
+		return ydStudentInfoMapper.findGroupTutor(username);
+	}
 
 }

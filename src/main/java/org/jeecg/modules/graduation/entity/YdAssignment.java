@@ -1,20 +1,21 @@
 package org.jeecg.modules.graduation.entity;
 
-import java.io.Serializable;
-import java.util.Date;
+import org.jeecg.common.aspect.annotation.Dict;
+import org.jeecgframework.poi.excel.annotation.Excel;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.TableField;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.jeecgframework.poi.excel.annotation.Excel;
 
 /**
  * @Description: 任务书表
@@ -33,6 +34,10 @@ public class YdAssignment {
 	@TableId(type = IdType.UUID)
     @ApiModelProperty(value = "id")
 	private java.lang.String id;
+	/**论文名称*/
+	@Excel(name = "论文名称", width = 15)
+    @ApiModelProperty(value = "论文名称")
+	private java.lang.String assignName;
 	/**任务书描述*/
 	@Excel(name = "任务书描述", width = 15)
     @ApiModelProperty(value = "任务书描述")
@@ -41,11 +46,11 @@ public class YdAssignment {
 	@Excel(name = "任务书文件id", width = 15)
     @ApiModelProperty(value = "任务书文件id")
 	private java.lang.String fileId;
-	/**未提交0 已提交1  未通过 2 已通过  3
-*/
-	@Excel(name = "未提交0 已提交1  未通过 2 已通过  3", width = 15)
+	/**未提交0 已提交1  未通过 2 已通过  3*/
+	@Excel(name = "状态（提交状态）", width = 15)
     @ApiModelProperty(value = "未提交0 已提交1  未通过 2 已通过  3")
-	private java.lang.String status;
+	@Dict(dicCode = "bs_state")
+	private java.lang.String state;
 	/**提交时间*/
 	@Excel(name = "提交时间", width = 20, format = "yyyy-MM-dd HH:mm:ss")
 	@JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
@@ -56,6 +61,10 @@ public class YdAssignment {
 	@Excel(name = "学生id", width = 15)
     @ApiModelProperty(value = "学生id")
 	private java.lang.String stuId;
+	/**选题id*/
+	@Excel(name = "选题id", width = 15)
+    @ApiModelProperty(value = "选题id")
+	private java.lang.String subjectId;
 	/**添加人*/
     @ApiModelProperty(value = "添加人")
 	private java.lang.String createBy;
@@ -77,4 +86,24 @@ public class YdAssignment {
     @ApiModelProperty(value = "删除状态（0，正常，1已删除）")
 	@TableLogic(value="0",delval = "1")
 	private java.lang.String delFlag;
+	
+	
+	
+	/**任务书路径*/
+	@TableField(exist = false)
+	private java.lang.String filePath;
+	
+	/**任务书名称*/
+	@TableField(exist = false)
+	private java.lang.String fileName;
+	
+	/** 老师名字*/
+	@TableField(exist = false)
+	private java.lang.String tname;
+	/** 学生名字 */
+	@TableField(exist = false)
+	private java.lang.String sname;
+	/** 学生账号 */
+	@TableField(exist = false)
+	private java.lang.String suname;
 }
